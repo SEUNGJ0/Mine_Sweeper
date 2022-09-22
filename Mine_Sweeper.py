@@ -2,6 +2,7 @@ import tkinter as tk
 from random import *
 from tkinter import *
 from functools import partial
+from MineLogic import MineLogic as Logic
 
 root = Tk()
 root.title("Mine Dectector")                   # 타이틀 제목 설정
@@ -88,42 +89,8 @@ def randindex(row, col):
         for y in range(randint(2,round(col/3))):
             list.append([-x,-y])
 
-def MineLogic(row, col, per):
-    # 인덱스 생성 및 지뢰
-    global Mine_count, t
-    t = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]
-    Mine_count = 0
-    Mine_spot = []
-    for i in range(row):
-        for j in range(col):
-            globals()[f"Index_{i}_{j}"] = {'row':i,'col':j,'Mine': 0,'Around_Mine_num':0,'Pct':None}
-            if randint(1,10) <= per:
-                eval(f"Index_{i}_{j}").update(Mine = 1) 
-                Mine_spot.append([i,j]) 
-                # 지뢰 개수 카운트
-                Mine_count += 1
-    
-    for i in range(row):
-        for j in range(col):
-            A_Mine_count = 0
-            if eval(f"Index_{i}_{j}")['Mine'] == 0:
-                eval(f"Index_{i}_{j}").update(Pct=randint(1,10))
-                for v in range(8):
-                    if [i+t[v][0],j+t[v][1]] in Mine_spot:
-                        A_Mine_count += 1
-                    eval(f"Index_{i}_{j}").update(Around_Mine_num = A_Mine_count) 
-
-
-    for i in range(row):
-        for j in range(col):
-            if eval(f"Index_{i}_{j}")['Mine'] == 1:
-                print("■",end = " ")
-            else:
-                print(eval(f"Index_{i}_{j}")['Around_Mine_num'], end = " ")
-        print()
-
 def Matrix(row, col):
-    MineLogic(row, col, 4)
+    Mine_Info, Mine_count = Logic(row, col, 4)
     randindex(row, col)
     #global First_Click ,Mistake_Count
     First_Click = 0     # 첫 클릭인지를 확인 하는 변수
@@ -140,15 +107,15 @@ def Matrix(row, col):
                 if First_Click == 0 :
                     for v in range(len(list)):
                         if i+list[v][0] >= 0 and i+list[v][0] < row and j+list[v][1] >= 0 and j+list[v][1] < col :
-                            if eval(f"Index_{i+list[v][0]}_{j+list[v][1]}")['Mine'] == 0:
-                                eval(f'B_{i+list[v][0]}_{j+list[v][1]}').config(text=eval(f"Index_{i+list[v][0]}_{j+list[v][1]}")['Around_Mine_num'])
+                            if Mine_Info[f"Index_{i+list[v][0]}_{j+list[v][1]}"]['Mine'] == 0:
+                                eval(f'B_{i+list[v][0]}_{j+list[v][1]}').config(text=Mine_Info[f"Index_{i+list[v][0]}_{j+list[v][1]}"]['Around_Mine_num'])
                             else :
                                 eval(f'B_{i+list[v][0]}_{j+list[v][1]}').config(text="■")
                         First_Click += 1 
 
                 ## 지뢰가 아닌 것을 클릭 시 주변 지뢰 개수를 출력함 ##    
-                if eval(f"Index_{i}_{j}")['Mine'] == 0:
-                    eval(f'B_{i}_{j}').config(text=eval(f"Index_{i}_{j}")['Around_Mine_num'])
+                if Mine_Info[f"Index_{i}_{j}"]['Mine'] == 0:
+                    eval(f'B_{i}_{j}').config(text=Mine_Info[f"Index_{i}_{j}"]['Around_Mine_num'])
                     MSG_Txt.set("지뢰가 아닙니다!")
 
                 ## 지뢰를 클릭 시 지뢰 클릭 횟수가 카운트 됨 ##    
@@ -173,11 +140,11 @@ def Matrix(row, col):
                 """
                     클릭한 버튼이 지뢰가 아니고, 해당 버튼이 이미 선택된 버튼이여야하며, 난이도를 위한 확률을 설정한다.
                 """
-                if eval(f"Index_{i}_{j}")['Mine'] == 0 and type(eval(f'B_{i}_{j}').cget("text")) == int and eval(f"Index_{i}_{j}")['Pct'] <= 2:         
+                if Mine_Info[f"Index_{i}_{j}"]['Mine'] == 0 and type(eval(f'B_{i}_{j}').cget("text")) == int and Mine_Info[f"Index_{i}_{j}"]['Pct'] <= 2:         
                     for v in range(8):
                         if i+t[v][0] >= 0 and i+t[v][0] <= row and j+t[v][1] >= 0 and j+t[v][1] <= col :
-                            if eval(f"Index_{i+list[v][0]}_{j+list[v][1]}")['Mine'] == 0:
-                                eval(f'B_{i+list[v][0]}_{j+list[v][1]}').config(text=eval(f"Index_{i+list[v][0]}_{j+list[v][1]}")['Around_Mine_num'])
+                            if Mine_Info[f"Index_{i+list[v][0]}_{j+list[v][1]}"]['Mine'] == 0:
+                                eval(f'B_{i+list[v][0]}_{j+list[v][1]}').config(text=Mine_Info[f"Index_{i+list[v][0]}_{j+list[v][1]}"]['Around_Mine_num'])
                             else:
                                 eval(f'B_{i+list[v][0]}_{j+list[v][1]}').config(text = '■')
 
