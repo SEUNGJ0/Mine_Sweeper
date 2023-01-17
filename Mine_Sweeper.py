@@ -69,14 +69,14 @@ def Click(i):
 Button(frame1,text = "START",command= Click('Start')).grid(row = 0,column = 0)
 
 def Set_Button(row, col):
-    if row > 5:
-        Button(frame1,text = "▼",command= Click('row_down')).grid(row = 1,column = 3)
-    elif row < 12:
-        Button(frame1,text = "▲",command= Click('row_up')).grid(row = 1,column = 2)
-    if col > 5:
-        Button(frame1,text = "▼",command= Click('col_down')).grid(row = 2,column = 3)
-    elif col < 20:
-        Button(frame1,text = "▲",command= Click('col_up')).grid(row = 2,column = 2)
+if row > 5:
+    Button(frame1,text = "▼",command= Click('row_down')).grid(row = 1,column = 3)
+elif row < 12:
+    Button(frame1,text = "▲",command= Click('row_up')).grid(row = 1,column = 2)
+if col > 5:
+    Button(frame1,text = "▼",command= Click('col_down')).grid(row = 2,column = 3)
+elif col < 20:
+    Button(frame1,text = "▲",command= Click('col_up')).grid(row = 2,column = 2)
 
 
     
